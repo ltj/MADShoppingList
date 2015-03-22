@@ -1,0 +1,35 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="dk.boxed.android.madshoppinglist.AddItemFragment">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:onClick="onClick">
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:id="@+id/editTextItem"
+            android:hint="@string/hint_input_item" />
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:id="@+id/editTextAmount"
+            android:hint="@string/hint_input_amount"
+            android:inputType="number" />
+
+        <Button
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="@string/button_text_ok"
+            android:onClick="onClick"
+            android:id="@+id/ok_button_add" />
+    </LinearLayout>
+
+</FrameLayout>

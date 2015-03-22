@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">MADShoppingList</string>
+    <string name="title_activity_shopping_list">ShoppingListActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+
+    <string name="button_text_ok">OK</string>
+    <string name="button_text_add">"+"</string>
+    <string name="button_text_subtract">"-"</string>
+
+    <string name="hint_input_item">Item</string>
+    <string name="hint_input_amount">Amount</string>
+
+    <string name="text_total_label">Total</string>
+</resources>

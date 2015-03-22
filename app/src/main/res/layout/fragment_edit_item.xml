@@ -1,0 +1,40 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="dk.boxed.android.madshoppinglist.EditItemFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView_edit_item"
+            android:layout_weight="0.6"
+            style="@style/Base.TextAppearance.AppCompat.Large" />
+
+        <Button
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="@string/button_text_add"
+            android:id="@+id/button_plus_amount" />
+
+        <Button
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="@string/button_text_subtract"
+            android:id="@+id/button_minus_amount" />
+
+        <Button
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="@string/button_text_ok"
+            android:onClick="onClick"
+            android:id="@+id/ok_button_edit" />
+
+    </LinearLayout>
+</FrameLayout>
