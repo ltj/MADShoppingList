@@ -5,12 +5,9 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.app.ListFragment;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-
-import dk.boxed.android.madshoppinglist.dummy.DummyContent;
 
 /**
  * A fragment representing a list of Items.
@@ -21,6 +18,7 @@ import dk.boxed.android.madshoppinglist.dummy.DummyContent;
  */
 public class ShoppingItemFragment extends ListFragment {
 
+    private static final String TAG = "ShoppingItemFragment";
     private OnFragmentInteractionListener mListener;
 
     /**
@@ -74,8 +72,15 @@ public class ShoppingItemFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
+        Cursor cursor = ((SimpleCursorAdapter)getListAdapter()).getCursor();
+        cursor.moveToPosition(position);
+        String name = cursor.getString(cursor.
+                getColumnIndexOrThrow(ShoppingListContract.ShoppingItem.COLUMN_NAME_NAME));
+        int amount = cursor.getInt(cursor.
+                getColumnIndexOrThrow(ShoppingListContract.ShoppingItem.COLUMN_NAME_AMOUNT));
+
         if (null != mListener) {
-            mListener.onFragmentListInteraction(id);
+            mListener.onFragmentListInteraction(new ShoppingItem(id, name, amount));
         }
     }
 

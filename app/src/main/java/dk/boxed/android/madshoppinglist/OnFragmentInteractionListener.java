@@ -2,10 +2,10 @@ package dk.boxed.android.madshoppinglist;
 
 
 /**
- * Created by lars on 19/03/15.
+ * Interface for fragment callbacks
  */
 public interface OnFragmentInteractionListener {
     public void onFragmentAddInteraction(ShoppingItem item);
     public void onFragmentEditInteraction(ShoppingItem item);
-    public void onFragmentListInteraction(long id);
+    public void onFragmentListInteraction(ShoppingItem item);
 }

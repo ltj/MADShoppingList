@@ -4,15 +4,12 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
-import android.database.Cursor;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 
 
@@ -20,7 +17,6 @@ public class ShoppingListActivity extends ActionBarActivity
         implements OnFragmentInteractionListener, View.OnClickListener {
 
     private static final String TAG = "ShoppingListActivity.";
-
     private static final String ADD_ITEM_FRAGMENT_TAG = "add_item_fragment";
     private static final String EDIT_ITEM_FRAGMENT_TAG = "edit_item_fragment";
 
@@ -38,7 +34,6 @@ public class ShoppingListActivity extends ActionBarActivity
         itemDAO.open();
 
         // add fragment if needed
-
         if (!topFragmentAdded) {
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -97,15 +92,8 @@ public class ShoppingListActivity extends ActionBarActivity
     }
 
     @Override
-    public void onFragmentListInteraction(long id) {
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        EditItemFragment editItemFragment = new EditItemFragment();
-        fragmentTransaction.replace(R.id.top_fragment_container, editItemFragment,
-                EDIT_ITEM_FRAGMENT_TAG);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
+    public void onFragmentListInteraction(ShoppingItem item) {
+        swapTopFragment(EDIT_ITEM_FRAGMENT_TAG);
     }
 
     @Override
@@ -121,14 +109,7 @@ public class ShoppingListActivity extends ActionBarActivity
         if (v.getId() == R.id.ok_button_edit) {
             // TODO: Handle db edits
             // Swap fragment
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-            AddItemFragment addItemFragment = new AddItemFragment();
-            fragmentTransaction.replace(R.id.top_fragment_container, addItemFragment,
-                    ADD_ITEM_FRAGMENT_TAG);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
+            swapTopFragment(ADD_ITEM_FRAGMENT_TAG);
         }
     }
 
@@ -137,6 +118,28 @@ public class ShoppingListActivity extends ActionBarActivity
             SimpleCursorAdapter adapter = (SimpleCursorAdapter) list.getListAdapter();
             adapter.swapCursor(itemDAO.getItems());
             adapter.notifyDataSetChanged();
+        }
+    }
+
+    private void swapTopFragment(String newtag) {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        Fragment next = null;
+
+        switch (newtag) {
+            case ADD_ITEM_FRAGMENT_TAG:
+                next = new AddItemFragment();
+                break;
+            case EDIT_ITEM_FRAGMENT_TAG:
+                next = new EditItemFragment();
+        }
+
+        if (next != null) {
+            fragmentTransaction.replace(R.id.top_fragment_container, next,
+                    newtag);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
         }
     }
 }
