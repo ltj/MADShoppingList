@@ -28,10 +28,6 @@ public class ShoppingItem {
         return amount;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
-    }
-
     public long getId() {
         return id;
     }

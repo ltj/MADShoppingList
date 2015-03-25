@@ -88,6 +88,11 @@ public class ShoppingListActivity extends ActionBarActivity
             return true;
         }
 
+        if (id == R.id.action_clear) {
+            // TODO: Clear table (or drop and re-create)
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">MADShoppingList</string>
-    <string name="title_activity_shopping_list">ShoppingListActivity</string>
+    <string name="title_activity_shopping_list">MAD Shopping List</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="action_clear">Clear</string>
 
 
     <string name="button_text_ok">OK</string>
