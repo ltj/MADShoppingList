@@ -32,7 +32,7 @@ public class AddItemFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_add_item, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
+
     public void onButtonPressed(ShoppingItemDAO itemDAO) {
         if (mListener != null) {
             EditText name = (EditText) getView().findViewById(R.id.editTextItem);

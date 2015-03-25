@@ -15,6 +15,8 @@ import android.widget.TextView;
 public class EditItemFragment extends Fragment {
 
     private static final String TAG = "EditItemFragment";
+
+
     private OnFragmentInteractionListener mListener;
     private ShoppingItem item;
 
@@ -36,6 +38,11 @@ public class EditItemFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -68,7 +75,7 @@ public class EditItemFragment extends Fragment {
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
+
     public void onButtonPressed() {
         if (mListener != null) {
             mListener.onFragmentEditInteraction(item);
