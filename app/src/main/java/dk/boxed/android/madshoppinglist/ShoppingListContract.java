@@ -23,6 +23,10 @@ public final class ShoppingListContract {
     public static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + ShoppingItem.TABLE_NAME;
 
+    public static final String SQL_COUNT_ENTRIES =
+            "SELECT SUM(" + ShoppingItem.COLUMN_NAME_AMOUNT +
+                    ") FROM " + ShoppingItem.TABLE_NAME;
+
     /* Inner class that defines the table contents */
     public static abstract class ShoppingItem implements BaseColumns {
         public static final String TABLE_NAME = "item";

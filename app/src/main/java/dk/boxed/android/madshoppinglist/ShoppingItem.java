@@ -12,7 +12,7 @@ public class ShoppingItem {
     public ShoppingItem(long id, String name, int amount) {
         this.id = id;
         this.name = name;
-        this.amount = amount;
+        this.amount = (amount > 0 ? amount : 0);
     }
 
     // constructor for new entries w. unknown id's

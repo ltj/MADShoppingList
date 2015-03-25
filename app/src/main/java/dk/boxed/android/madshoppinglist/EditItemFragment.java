@@ -9,17 +9,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 
 public class EditItemFragment extends Fragment {
 
     private static final String TAG = "EditItemFragment";
     private OnFragmentInteractionListener mListener;
+    private ShoppingItem item;
 
+    /* Fragment factory method
+    *  sets the ShoppingItem object
+    */
+    public static EditItemFragment newInstance(ShoppingItem item) {
+        EditItemFragment fragment = new EditItemFragment();
+        fragment.setItem(item);
+        return fragment;
+    }
 
     public EditItemFragment() {
         // Required empty public constructor
     }
+
+    public void setItem(ShoppingItem item) { this.item = item; }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,13 +60,18 @@ public class EditItemFragment extends Fragment {
             }
         });
 
+        if (item != null) {
+            TextView label = (TextView) view.findViewById(R.id.textView_edit_item);
+            label.setText(item.getName());
+        }
+
         return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void onButtonPressed() {
         if (mListener != null) {
-            mListener.onFragmentEditInteraction(new ShoppingItem(0, "", 0));
+            mListener.onFragmentEditInteraction(item);
         }
     }
 
@@ -77,10 +94,19 @@ public class EditItemFragment extends Fragment {
 
     private void onMinus() {
         Log.i(TAG, "Minus clicked");
+        if (item != null) {
+            item.decrementAmount();
+            onButtonPressed();
+        }
     }
 
     private void onPlus() {
         Log.i(TAG, "Plus clicked");
+        if (item != null)  {
+            item.incrementAmount();
+            onButtonPressed();
+        }
+
     }
 
 }

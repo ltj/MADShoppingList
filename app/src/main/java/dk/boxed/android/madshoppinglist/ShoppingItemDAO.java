@@ -4,14 +4,18 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 
 /**
- * Created by lars on 22/03/15.
+ * Data Access Object for ShoppingItem
+ * Encapsulates Helper and DB operations
+ * Shopping Item object abstraction has own ShoppingItem class
  */
 public class ShoppingItemDAO {
 
     private ShoppingListDbHelper helper;
     private SQLiteDatabase db;
+    private SQLiteStatement countSql;
 
     public ShoppingItemDAO(Context context) {
         helper = new ShoppingListDbHelper(context);
@@ -19,9 +23,11 @@ public class ShoppingItemDAO {
 
     public void open() {
         db = helper.getWritableDatabase();
+        countSql = db.compileStatement(ShoppingListContract.SQL_COUNT_ENTRIES);
     }
 
     public void close() {
+        countSql = null;
         helper.close();
     }
 
@@ -32,7 +38,7 @@ public class ShoppingItemDAO {
         return db.insert(ShoppingListContract.ShoppingItem.TABLE_NAME, null, values);
     }
 
-    public void updateAmount(int id, int amount) {
+    public void updateAmount(long id, int amount) {
         if (amount > 0) {
             ContentValues values = new ContentValues();
             values.put(ShoppingListContract.ShoppingItem.COLUMN_NAME_AMOUNT, amount);
@@ -51,7 +57,7 @@ public class ShoppingItemDAO {
         }
     }
 
-    public void deleteItem(int id) {
+    public void deleteItem(long id) {
         String selection = ShoppingListContract.ShoppingItem._ID + " LIKE ?";
         String[] selectionArgs = {String.valueOf(id)};
 
@@ -72,5 +78,15 @@ public class ShoppingItemDAO {
         return cursor;
     }
 
+    public long getTotal() {
+        // need to call open
+        if (countSql != null) {
+            Long total = countSql.simpleQueryForLong();
+            return total;
+        }
+        else {
+            return -1;
+        }
+    }
 
 }

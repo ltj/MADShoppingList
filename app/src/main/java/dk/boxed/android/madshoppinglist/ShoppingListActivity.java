@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 
 public class ShoppingListActivity extends ActionBarActivity
@@ -19,10 +20,12 @@ public class ShoppingListActivity extends ActionBarActivity
     private static final String TAG = "ShoppingListActivity.";
     private static final String ADD_ITEM_FRAGMENT_TAG = "add_item_fragment";
     private static final String EDIT_ITEM_FRAGMENT_TAG = "edit_item_fragment";
+    private static final String STATE_TOP_FRAGMENT_LABEL = "top_frag_label";
 
     private ShoppingItemDAO itemDAO;
     private ListFragment list;
     private boolean topFragmentAdded = false;
+    private String currentTopFragmentLabel = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +35,10 @@ public class ShoppingListActivity extends ActionBarActivity
         // get DAO and open db
         itemDAO = new ShoppingItemDAO(this);
         itemDAO.open();
+
+        if (savedInstanceState != null) {
+            currentTopFragmentLabel = savedInstanceState.getString(STATE_TOP_FRAGMENT_LABEL);
+        }
 
         // add fragment if needed
         if (!topFragmentAdded) {
@@ -44,10 +51,13 @@ public class ShoppingListActivity extends ActionBarActivity
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
             topFragmentAdded = true;
+            currentTopFragmentLabel = ADD_ITEM_FRAGMENT_TAG;
         }
 
         // get list fragment
         list = (ListFragment) getFragmentManager().findFragmentById(R.id.list_fragment);
+
+        updateTotal();
     }
 
     @Override
@@ -83,17 +93,37 @@ public class ShoppingListActivity extends ActionBarActivity
     @Override
     public void onFragmentAddInteraction(ShoppingItem item) {
         Log.d(TAG, item.getName() + " " + item.getAmount());
-        updateListAdapter();
+        if(item.getId() == -1) {
+            // db error
+            // TODO: toast error
+        }
+        else if (item.getAmount() == 0) {
+            // invalid amount
+            // TODO: toast or notify bad input
+        }
+        else {
+            // All good. Re-query
+            updateListAdapter();
+            // TODO: toast OK
+        }
     }
 
     @Override
     public void onFragmentEditInteraction(ShoppingItem item) {
-
+        if (item.getAmount() > 0) {
+            itemDAO.updateAmount(item.getId(), item.getAmount());
+            updateListAdapter();
+        }
+        if (item.getAmount() == 0) {
+            itemDAO.deleteItem(item.getId());
+            updateListAdapter();
+            swapTopFragment(ADD_ITEM_FRAGMENT_TAG, null);
+        }
     }
 
     @Override
     public void onFragmentListInteraction(ShoppingItem item) {
-        swapTopFragment(EDIT_ITEM_FRAGMENT_TAG);
+        swapTopFragment(EDIT_ITEM_FRAGMENT_TAG, item);
     }
 
     @Override
@@ -109,8 +139,14 @@ public class ShoppingListActivity extends ActionBarActivity
         if (v.getId() == R.id.ok_button_edit) {
             // TODO: Handle db edits
             // Swap fragment
-            swapTopFragment(ADD_ITEM_FRAGMENT_TAG);
+            swapTopFragment(ADD_ITEM_FRAGMENT_TAG, null);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(STATE_TOP_FRAGMENT_LABEL, currentTopFragmentLabel);
+        super.onSaveInstanceState(outState);
     }
 
     private void updateListAdapter() {
@@ -118,10 +154,11 @@ public class ShoppingListActivity extends ActionBarActivity
             SimpleCursorAdapter adapter = (SimpleCursorAdapter) list.getListAdapter();
             adapter.swapCursor(itemDAO.getItems());
             adapter.notifyDataSetChanged();
+            updateTotal();
         }
     }
 
-    private void swapTopFragment(String newtag) {
+    private void swapTopFragment(String newtag, ShoppingItem item) {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
@@ -132,7 +169,7 @@ public class ShoppingListActivity extends ActionBarActivity
                 next = new AddItemFragment();
                 break;
             case EDIT_ITEM_FRAGMENT_TAG:
-                next = new EditItemFragment();
+                next = EditItemFragment.newInstance(item);
         }
 
         if (next != null) {
@@ -141,5 +178,14 @@ public class ShoppingListActivity extends ActionBarActivity
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
         }
+
+        currentTopFragmentLabel = newtag;
     }
+
+    private void updateTotal() {
+        Long total = itemDAO.getTotal();
+        TextView showAmount = (TextView) findViewById(R.id.textView_total_amount);
+        showAmount.setText(total.toString());
+    }
+
 }
