@@ -3,7 +3,6 @@
     <string name="title_activity_shopping_list">MAD Shopping List</string>
 
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
     <string name="action_clear">Clear</string>
 
 
@@ -15,4 +14,6 @@
     <string name="hint_input_amount">Amount</string>
 
     <string name="text_total_label">Total</string>
+    <string name="text_item_label">Item</string>
+    <string name="text_amount_label">Amount</string>
 </resources>

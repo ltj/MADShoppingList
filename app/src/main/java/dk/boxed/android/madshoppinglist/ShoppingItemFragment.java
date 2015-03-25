@@ -38,10 +38,10 @@ public class ShoppingItemFragment extends ListFragment {
 
         String[] fromColumns = {ShoppingListContract.ShoppingItem.COLUMN_NAME_NAME,
                 ShoppingListContract.ShoppingItem.COLUMN_NAME_AMOUNT};
-        int[] toViews = { android.R.id.text1, android.R.id.text2 };
+        int[] toViews = { R.id.text1, R.id.text2 };
 
         SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(getActivity(),
-                android.R.layout.simple_list_item_2, cursor, fromColumns,
+                R.layout.shopping_list_item, cursor, fromColumns,
                 toViews, 0);
 
         setListAdapter(cursorAdapter);

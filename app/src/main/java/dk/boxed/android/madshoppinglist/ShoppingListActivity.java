@@ -27,6 +27,8 @@ public class ShoppingListActivity extends ActionBarActivity
     private static final String STATE_CURRENT_ITEM_ID = "state_item_id";
     private static final String STATE_CURRENT_ITEM_NAME = "state_item_name";
     private static final String STATE_CURRENT_ITEM_AMOUNT = "state_item_amount";
+    private static final String STATE_NEW_ITEM_TEXT = "state_new_item_text";
+    private static final String STATE_NEW_ITEM_AMOUNT = "state_new_item_amount";
 
     private ShoppingItemDAO itemDAO;
     private ListFragment list;
@@ -44,16 +46,30 @@ public class ShoppingListActivity extends ActionBarActivity
 
         if (savedInstanceState != null) {
             currentTopFragmentTag = savedInstanceState.getString(STATE_TOP_FRAGMENT_LABEL);
-            currentItem = new ShoppingItem(
-                    savedInstanceState.getLong(STATE_CURRENT_ITEM_ID),
-                    savedInstanceState.getString(STATE_CURRENT_ITEM_NAME),
-                    savedInstanceState.getInt(STATE_CURRENT_ITEM_AMOUNT)
-            );
+            if (currentTopFragmentTag == EDIT_ITEM_FRAGMENT_TAG) {
+                currentItem = new ShoppingItem(
+                        savedInstanceState.getLong(STATE_CURRENT_ITEM_ID),
+                        savedInstanceState.getString(STATE_CURRENT_ITEM_NAME),
+                        savedInstanceState.getInt(STATE_CURRENT_ITEM_AMOUNT)
+                );
+            }
+            else {
+                int amount;
+                try {
+                    amount = Integer.parseInt(savedInstanceState.getString(STATE_NEW_ITEM_AMOUNT));
+                }
+                catch (NumberFormatException e) {
+                    amount = 0;
+                }
+                currentItem = new ShoppingItem(
+                        savedInstanceState.getString(STATE_NEW_ITEM_TEXT),
+                        amount
+                );
+            }
         }
 
         // put fragment in top UI
-        ShoppingItem item =
-                (currentTopFragmentTag == ADD_ITEM_FRAGMENT_TAG ? null : currentItem);
+        ShoppingItem item = currentItem;
         swapTopFragment(currentTopFragmentTag, item);
 
         // get list fragment
@@ -83,13 +99,10 @@ public class ShoppingListActivity extends ActionBarActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         if (id == R.id.action_clear) {
-            // TODO: Clear table (or drop and re-create)
+            itemDAO.deleteAll();
+            updateListAdapter();
+            updateTotal();
             return true;
         }
 
@@ -99,19 +112,19 @@ public class ShoppingListActivity extends ActionBarActivity
 
     @Override
     public void onFragmentAddInteraction(ShoppingItem item) {
-        Log.d(TAG, item.getName() + " " + item.getAmount());
-        if(item.getId() == -1) {
-            // db error
-            Toast.makeText(this, "DB error", Toast.LENGTH_SHORT).show();
-        }
-        else if (item.getAmount() == 0) {
-            // invalid amount
-            Toast.makeText(this, item.getName() + " not added. Zero amount.", Toast.LENGTH_SHORT).show();
-        }
-        else {
-            // All good. Re-query
-            updateListAdapter();
-            Toast.makeText(this, item.getName() + " added to list.", Toast.LENGTH_SHORT).show();
+        if(item != null) {
+            Log.d(TAG, item.getName() + " " + item.getAmount());
+            if (item.getId() == -1) {
+                // db error
+                Toast.makeText(this, "DB error", Toast.LENGTH_SHORT).show();
+            } else if (item.getAmount() == 0) {
+                // invalid amount
+                Toast.makeText(this, item.getName() + " not added. Zero amount.", Toast.LENGTH_SHORT).show();
+            } else {
+                // All good. Re-query
+                updateListAdapter();
+                Toast.makeText(this, item.getName() + " added to list.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -157,6 +170,12 @@ public class ShoppingListActivity extends ActionBarActivity
             outState.putString(STATE_CURRENT_ITEM_NAME, currentItem.getName());
             outState.putInt(STATE_CURRENT_ITEM_AMOUNT, currentItem.getAmount());
         }
+        if (currentTopFragmentTag == ADD_ITEM_FRAGMENT_TAG) {
+            TextView newname = (TextView) findViewById(R.id.editTextItem);
+            TextView newamount = (TextView) findViewById(R.id.editTextAmount);
+            outState.putString(STATE_NEW_ITEM_TEXT, newname.getText().toString());
+            outState.putString(STATE_NEW_ITEM_AMOUNT, newamount.getText().toString());
+        }
         outState.putString(STATE_TOP_FRAGMENT_LABEL, currentTopFragmentTag);
         super.onSaveInstanceState(outState);
     }
@@ -178,7 +197,7 @@ public class ShoppingListActivity extends ActionBarActivity
 
         switch (newtag) {
             case ADD_ITEM_FRAGMENT_TAG:
-                next = new AddItemFragment();
+                next = AddItemFragment.newInstance(item);
                 break;
             case EDIT_ITEM_FRAGMENT_TAG:
                 next = EditItemFragment.newInstance(item);

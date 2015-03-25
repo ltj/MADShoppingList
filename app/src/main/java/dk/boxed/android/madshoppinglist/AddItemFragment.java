@@ -15,9 +15,20 @@ public class AddItemFragment extends Fragment {
     private static final String TAG = "AddItemFragment.";
 
     private OnFragmentInteractionListener mListener;
+    private ShoppingItem item;
+
+    public static AddItemFragment newInstance(ShoppingItem item) {
+        AddItemFragment fragment = new AddItemFragment();
+        fragment.setItem(item);
+        return fragment;
+    }
 
     public AddItemFragment() {
         // Required empty public constructor
+    }
+
+    public void setItem(ShoppingItem item) {
+        this.item = item;
     }
 
     @Override
@@ -29,7 +40,16 @@ public class AddItemFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_item, container, false);
+        View view = inflater.inflate(R.layout.fragment_add_item, container, false);
+
+        if (item != null) {
+            EditText name = (EditText) view.findViewById(R.id.editTextItem);
+            name.setText(item.getName());
+            EditText amount = (EditText) view.findViewById(R.id.editTextAmount);
+            if (item.getAmount() > 0) amount.setText(((Integer)item.getAmount()).toString());
+        }
+
+        return view;
     }
 
 
@@ -78,4 +98,5 @@ public class AddItemFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
 }

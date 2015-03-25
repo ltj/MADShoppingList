@@ -89,4 +89,8 @@ public class ShoppingItemDAO {
         }
     }
 
+    public int deleteAll() {
+        return db.delete(ShoppingListContract.ShoppingItem.TABLE_NAME, "1", null);
+    }
+
 }
